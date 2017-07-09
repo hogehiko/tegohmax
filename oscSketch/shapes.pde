@@ -33,9 +33,11 @@ class Box{
     centerY += vectorY;
     strokeWeight(3);
     translate((int)centerX, (int)centerY);
+    rotate(PI * filterFreqRate);
     stroke(color(255,255, 255, alpha));
     noFill();
     rect(- size/2, - size /2, size, size);
+    rotate(-PI * filterFreqRate);
     translate((int)-centerX, (int)-centerY);
     vectorX *= 0.9;
     vectorY *= 0.9;

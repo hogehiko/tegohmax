@@ -1,10 +1,15 @@
 import oscP5.*;
 import java.util.*;
 
-OscP5 oscP5;
+OscP5 oscP5, oscP5Control;
+
+float filterFreqRate=1;
+
+boolean filterOn = true;
 
 void setup(){
   oscP5 = new OscP5(this, 2346);
+  oscP5Control = new OscP5(this, 2347);
   size(400, 300);
   
 }
@@ -20,6 +25,7 @@ int BLUR_INITIAL = 6;
 
 void draw(){
   background(0);
+  
   count++;
   if(count >= INTERVAL){
     shapes.add(new Box());
@@ -39,6 +45,11 @@ void draw(){
     filter(BLUR, blur);
     blur--;
   }
+  
+  if(filterOn){
+   filter(INVERT); 
+  }
+  
 }
 
 synchronized void oscEvent(OscMessage msg){
@@ -49,9 +60,13 @@ synchronized void oscEvent(OscMessage msg){
             b.move(); 
          }
         blur= BLUR_INITIAL; 
-      }else{
-        
       }
+  }
+  if(msg.checkAddrPattern("/FilterFreq") ==true){
+    filterFreqRate = msg.get(0).floatValue();
+  }
+  if(msg.checkAddrPattern("/FilterOn") == true){
+     filterOn = ! filterOn;
   }
   println(msg);
 } 
