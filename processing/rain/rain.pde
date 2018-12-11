@@ -17,6 +17,7 @@ List<RainDrop> shapes = new ArrayList();
 
 List<Note> notes = new ArrayList();
 
+int minNote=Integer.MAX_VALUE, maxNote=Integer.MIN_VALUE;
 void draw(){
   synchronized(this){
     for(Note n: notes){
@@ -27,15 +28,15 @@ void draw(){
     
     background(128);
     for(RainDrop b : shapes){
+      minNote = min(minNote, b.note.note);
+      maxNote = max(maxNote, b.note.note);
+    }
+    for(RainDrop b : shapes){
       b.deformation();
-      b.draw();
+      b.draw(minNote, maxNote);
       
       if(b.lastClock()){
-        OscMessage msg = new OscMessage("/midi/noteon");
-        msg.add(1);
-        msg.add(b.note.note);
-        msg.add(b.note.velocity);
-        oscP5.send(msg, oscRemoteLocation);
+        oscP5.send(b.note.toOscMessage(), oscRemoteLocation);
       }
     }
   
@@ -56,18 +57,7 @@ void draw(){
 
 
 synchronized void oscEvent(OscMessage msg){
-
-     if(msg.checkAddrPattern("/midi/noteon")==true) {
-
-      int ch = msg.get(0).intValue();
-      
-      int n = msg.get(1).intValue();
-      int v = msg.get(2).intValue();
-      Note note = new Note();
-      note.note = n;
-      note.velocity = v;
-      
-      notes.add(note);
+  if(msg.checkAddrPattern("/midi/noteon")==true) {      
+      notes.add(new Note(msg));
   }
-
 } 

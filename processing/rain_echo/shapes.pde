@@ -1,15 +1,35 @@
-class Note{
+import oscP5.*;
+
+
+
+public class Note{
   public int note;
   public int velocity;
+  public int channel;
+  
+  public Note(){}
+  
+  public Note(OscMessage msg){
+      this.channel = msg.get(0).intValue();      
+      this.note = msg.get(1).intValue();
+      this.velocity = msg.get(2).intValue();
+  }
+
+  public OscMessage toOscMessage(){
+     OscMessage msg = new OscMessage("/midi/noteon");
+     msg.add(channel);
+     msg.add(note);
+     msg.add(velocity);
+     return msg;
+  }
 }
+
 class RainDrop{
   int delay;
   int clock = 0;
   
   Note note;
-  
-  float INITIAL_SPEED=3;
-  
+
   int AFTER_DELAY= 120;
   
   public RainDrop(int delay, Note note){
@@ -17,7 +37,11 @@ class RainDrop{
       this.note = note;
   }
   
-  double centerX = width * Math.random();
+  //double centerX = width * Math.random();
+  
+  float centerX(int minX, int maxX){
+    return width * (float)(note.note-minX) / (maxX - minX);
+  }
   
   public void deformation(){
      clock++; 
@@ -54,14 +78,12 @@ class RainDrop{
      return clock == delay; 
   }
   
-  void draw(){
+  void draw(int minNote, int maxNote){
     if(note.velocity == 0)return;
     strokeWeight(3);    
     stroke(color(255,255, 255, alpha()));
     noFill();
-    ellipse((int)centerX, centerY() , sizeX(),  sizeY());
+    ellipse((int)centerX(minNote, maxNote), centerY() , sizeX(),  sizeY());
      
   }
-  
-  
 }
