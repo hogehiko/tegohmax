@@ -1,4 +1,4 @@
-# hogehiko_visualizer
+# tegohmax
 
 Midi visualizers and effects on MAX (for Live) and Processing
 
@@ -21,4 +21,5 @@ Midi visualizers and effects on MAX (for Live) and Processing
 
 * A MIDI note as a raindrop
 * Landing of raindrops generate new MIDI notes with weaken velocity.
+
   
